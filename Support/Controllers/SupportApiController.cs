@@ -30,6 +30,12 @@ namespace Support.Controllers
             return id;
         }
 
+        [HttpGet("queries")]
+        public List<Query> GetQueries() {
+            return _core.GetQueries();
+        }
+
+
         /// <summary>
         /// Add new Query
         /// </summary>

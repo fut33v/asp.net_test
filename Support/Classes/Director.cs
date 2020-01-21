@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Support.Classes
 {
-    public class Director
+    public class Director : Employee
     {
     }
 }

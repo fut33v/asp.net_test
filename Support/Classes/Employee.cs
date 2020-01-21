@@ -10,24 +10,20 @@ namespace Support.Classes
     {
         public virtual void Process(Query query)
         {
-            // get current time
             _startTime = DateTime.Now;
-            // save it
-
-            // process for some time, get this time?
         }
 
         private bool CheckFree()
         {
-            if (_query == null)
+            if (Query == null)
             {
                 return true;
             }
 
             var diff = DateTime.Now - _startTime;
-            if (diff.Seconds > _query.ProcessTimeSec)
+            if (diff.Seconds > Query.ProcessTimeSec)
             {
-                _query = null;
+                Query = null;
                 return true;
             }
 
@@ -35,9 +31,12 @@ namespace Support.Classes
         }
 
         public bool Free => CheckFree();
-        //private bool free;
 
-        private Query _query = null;
+        public void SetFree() {
+            Query = null;
+        }
+
+        public Query Query { get; private set; }
         private DateTime _startTime ;
     }
 }
