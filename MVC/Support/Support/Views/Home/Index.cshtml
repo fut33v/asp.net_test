@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Support";
+}
+
+
+<style>
+    td {
+        border: 1px solid black;
+        padding: 12px;
+    }
+</style>
+
+<div style="float: left;">
+    <h2>Queries</h2>
+    <table>
+        <tr>
+            <td>Id</td>
+            <td>Text</td>
+            <td>Status</td>
+            <td>Processing Time</td>
+        </tr>
+        @foreach (var q in ViewBag.Queries)
+        {
+            <tr>
+                <td><p>@q.Id</p></td>
+                <td><p>@q.Text</p></td>
+                <td><p>@q.Status</p></td>
+                <td><p>@q.ProcessTimeSec</p></td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div style="float: right;">
+<h2>Employees</h2>
+
+    <table>
+        <tr>
+            <td>Query Id</td>
+            <td>Free</td>
+            <td>Name</td>
+        </tr>
+        @foreach (var e in ViewBag.Employees)
+        {
+            <tr>
+                <td><p>@(e.Query?.Id ?? "None")</p></td>
+                <td><p>@e.Free</p></td>
+                <td><p>@e.Name</p></td>
+            </tr>
+        }
+    </table>
+</div>
