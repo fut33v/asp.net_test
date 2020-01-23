@@ -3,7 +3,7 @@
     public class Operator : Employee
     {
         public Operator() {
-            Name = "Operator";
+            Position = "Operator";
         }
     }
 }

@@ -23,6 +23,6 @@
         /// </summary>
         public uint ProcessTimeSec { get; set; }
 
-        private static uint IdCounter = 0;
+        private static uint IdCounter = 1;
     }
 }

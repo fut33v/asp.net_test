@@ -13,12 +13,17 @@ namespace Support.Controllers
         private Core _core = Core.GetInstance();
 
         public ActionResult Index() {
-            _core.Update();
+            //_core.Update();
+
             var queries =  _core.GetQueries();
             ViewBag.Queries = queries;
 
             var employees = _core.GetEmployees();
             ViewBag.Employees = employees;
+
+            var history = _core.GetHistory();
+            ViewBag.History = history;
+
             return View();
         }
 

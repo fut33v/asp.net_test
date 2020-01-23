@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Support.Models {
     public class Core {
         private static readonly Lazy<Core> lazy =
             new Lazy<Core>(() => new Core());
 
+        private Timer _timer;
+
         private Core() {
+            _timer = new Timer(Update, null, 1000, 1000);
 
             TestData();
         }
@@ -17,15 +21,13 @@ namespace Support.Models {
             uint directors = 1;
 
             for (int i = 0; i < operators; ++i) {
-                _employees.Add(new Operator());
+                AddEmployee(new Operator());
             }
-
             for (int i = 0; i < managers; ++i) {
-                _employees.Add(new Manager());
+                AddEmployee(new Manager());
             }
-
             for (int i = 0; i < directors; ++i) {
-                _employees.Add(new Director());
+                AddEmployee(new Director());
             }
 
             for (int i = 0; i < 20; ++i) {
@@ -38,16 +40,14 @@ namespace Support.Models {
             return lazy.Value;
         }
 
-        public void Update() {
-
+        public void Update(object state) {
             if (_queue.Count == 0) {
                 return;
             }
 
             bool nothingToDo = false;
             while (!nothingToDo) {
-                var tq = _queue.Peek(); 
-                var query = tq.Item2;
+                var tq = _queue.Peek();
                 var diff = DateTime.Now - tq.Item1;
 
                 bool manager = diff.Seconds > Tm, director = diff.Seconds > Td;
@@ -57,24 +57,37 @@ namespace Support.Models {
                         nothingToDo = true;
                         break;
                     }
+
                     if (employee is Operator o && o.Free) {
                         var timeQuery = _queue.Dequeue();
                         o.Process(timeQuery.Item2);
-                    } else if (manager && employee is Manager m && m.Free) {
+                    }
+                    else if (manager && employee is Manager m && m.Free) {
                         var timeQuery = _queue.Dequeue();
                         m.Process(timeQuery.Item2);
-                    } else if (director && employee is Director d && d.Free) {
+                    }
+                    else if (director && employee is Director d && d.Free) {
                         var timeQuery = _queue.Dequeue();
                         d.Process(timeQuery.Item2);
                     }
                     else {
                         nothingToDo = true;
                     }
-
                 }
+            }
+        }
 
+        private void CompletedCallback(Employee employee, Query query) {
+            if (!_history.ContainsKey(employee)) {
+                _history[employee] = new List<Query>();
             }
 
+            _history[employee].Add(query);
+        }
+
+        public void AddEmployee(Employee employee) {
+            employee.SetCompletedCallback(CompletedCallback);
+            _employees.Add(employee);
         }
 
         public void AddQuery(Query query) {
@@ -89,6 +102,7 @@ namespace Support.Models {
                     if (o.Free) {
                         o.Process(query);
                         freeFound = true;
+                        break;
                     }
                 }
             }
@@ -97,7 +111,6 @@ namespace Support.Models {
                 query.Status = Query.StatusEnum.Queued;
                 _queue.Enqueue(new Tuple<DateTime, Query>(DateTime.Now, query));
             }
-
         }
 
 
@@ -118,6 +131,10 @@ namespace Support.Models {
             return _queries;
         }
 
+        public Dictionary<Employee, List<Query>> GetHistory() {
+            return _history;
+        }
+
         /// <summary>
         /// Get all employees list
         /// </summary>
@@ -131,14 +148,25 @@ namespace Support.Models {
         /// </summary>
         /// <param name="id"></param>
         public void CancelQuery(uint id) {
-            foreach (var employee in _employees) {
-                if (employee.Query.Id == id) {
-                    employee.SetFree();
+            foreach (var query in _queries) {
+                if (query.Id == id) {
+                    if (query.Status == Query.StatusEnum.Completed) {
+                        return;
+                    }
+
+                    if (query.Status == Query.StatusEnum.Processing) {
+                        foreach (var employee in _employees) {
+                            if (employee.Query?.Id == id) {
+                                employee.Query.Status = Query.StatusEnum.Cancelled;
+                                employee.SetFree();
+                            }
+                        }
+                    }
+                    else {
+                        query.Status = Query.StatusEnum.Cancelled;
+                    }
                 }
             }
-
-            // or set another status?
-            _queries.Remove(_queries.Find(x => x.Id == id));
         }
 
 
@@ -157,9 +185,16 @@ namespace Support.Models {
         /// </summary>
         private List<Employee> _employees = new List<Employee>();
 
-        private Random _random = new Random();
+        /// <summary>
+        /// History of completed queries
+        /// </summary>
+        private Dictionary<Employee, List<Query>> _history = new Dictionary<Employee, List<Query>>();
+
+        private readonly Random _random = new Random();
+
         private const uint Tm = 4;
         private const uint Td = 8;
+
         private const int QueryMinTime = 1;
         private const int QueryMaxTime = 15;
     }

@@ -10,7 +10,7 @@
     }
 </style>
 
-<div style="float: left;">
+<div style="float: left; margin: 10px;">
     <h2>Queries</h2>
     <table>
         <tr>
@@ -19,33 +19,79 @@
             <td>Status</td>
             <td>Processing Time</td>
         </tr>
-        @foreach (var q in ViewBag.Queries)
-        {
+        @foreach (var q in ViewBag.Queries) {
             <tr>
-                <td><p>@q.Id</p></td>
-                <td><p>@q.Text</p></td>
-                <td><p>@q.Status</p></td>
-                <td><p>@q.ProcessTimeSec</p></td>
+                <td>
+                    <p>#@q.Id</p>
+                </td>
+                <td>
+                    <p>@q.Text</p>
+                </td>
+                <td>
+                    <p>@q.Status</p>
+                </td>
+                <td>
+                    <p>@q.ProcessTimeSec sec</p>
+                </td>
             </tr>
         }
     </table>
 </div>
 
-<div style="float: right;">
-<h2>Employees</h2>
+<div style="float: left; margin: 10px;">
+    <h2>Employees</h2>
 
     <table>
         <tr>
             <td>Query Id</td>
             <td>Free</td>
-            <td>Name</td>
+            <td>Position</td>
         </tr>
-        @foreach (var e in ViewBag.Employees)
-        {
+        @foreach (var e in ViewBag.Employees) {
             <tr>
-                <td><p>@(e.Query?.Id ?? "None")</p></td>
-                <td><p>@e.Free</p></td>
-                <td><p>@e.Name</p></td>
+                <td>
+                    <p>@(e.Query?.Id ?? "None")</p>
+                </td>
+                <td>
+                    <p>@e.Free</p>
+                </td>
+                <td>
+                    <p>@e.Position</p>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div style="float: right; margin: 10px;">
+    <h2>History</h2>
+
+    <table>
+        <tr>
+            <td>Position</td>
+            <td>Employee Id</td>
+            <td>Queries</td>
+        </tr>
+        @foreach (var h in ViewBag.History) {
+            <tr>
+                <td>
+                    <p>@h.Key.Position</p>
+                </td>
+                <td>
+                    <p>@h.Key.Id</p>
+                </td>
+                <td>
+                    <p>
+                        <table>
+                            @foreach (var q in h.Value) {
+                                <tr>
+                                    <td>#@q.Id</td>
+                                    <td>@q.ProcessTimeSec sec</td>
+                                </tr>
+                            }
+                        </table>
+                    </p>
+                </td>
             </tr>
         }
     </table>

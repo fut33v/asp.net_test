@@ -14,9 +14,8 @@ namespace Support.Controllers
         private Core _core = Core.GetInstance();
 
         [HttpGet]
-        public int GetStatus(int id) {
-            _core.GetStatus(id);
-            return id;
+        public Query.StatusEnum? GetStatus(int id) {
+            return _core.GetStatus(id);
         }
 
         [HttpGet]

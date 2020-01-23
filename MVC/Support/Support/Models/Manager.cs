@@ -3,7 +3,7 @@
     public class Manager : Employee
     {
         public Manager() {
-            Name = "Manager";
+            Position = "Manager";
         }
     }
 }
