@@ -7,18 +7,40 @@ namespace Support.Models {
         private static readonly Lazy<Core> lazy =
             new Lazy<Core>(() => new Core());
 
-        private Timer _timer;
 
+        /// <summary>
+        /// Private constructor of Singleton
+        /// </summary>
         private Core() {
-            _timer = new Timer(Update, null, 1000, 1000);
-
-            TestData();
+            ConfigStruct = new Config
+            {
+                QueryMinTime = 1, QueryMaxTime = 15, Tm=4, Td=8,
+                NumOfOperators = 4, NumOfManagers = 3, NumOfDirectors = 1
+            };
         }
 
+        /// <summary>
+        /// Start updating timer and fullfill data
+        /// </summary>
+        public void Start() {
+            if (_started)
+            {
+                return;
+            }
+
+            TestData();
+
+            _timer = new Timer(Update, null, 1000, 1000);
+            _started = true;
+        }
+
+        /// <summary>
+        /// Create initial employees and queries
+        /// </summary>
         private void TestData() {
-            uint operators = 3;
-            uint managers = 2;
-            uint directors = 1;
+            int operators = ConfigStruct.NumOfOperators;
+            int managers = ConfigStruct.NumOfManagers;
+            int directors = ConfigStruct.NumOfDirectors;
 
             for (int i = 0; i < operators; ++i) {
                 AddEmployee(new Operator());
@@ -36,10 +58,18 @@ namespace Support.Models {
             }
         }
 
+        /// <summary>
+        /// Singleton
+        /// </summary>
+        /// <returns></returns>
         public static Core GetInstance() {
             return lazy.Value;
         }
 
+        /// <summary>
+        /// Update logic state by timer
+        /// </summary>
+        /// <param name="state"></param>
         public void Update(object state) {
             if (_queue.Count == 0) {
                 return;
@@ -50,7 +80,7 @@ namespace Support.Models {
                 var tq = _queue.Peek();
                 var diff = DateTime.Now - tq.Item1;
 
-                bool manager = diff.Seconds > Tm, director = diff.Seconds > Td;
+                bool manager = diff.Seconds > ConfigStruct.Tm, director = diff.Seconds > ConfigStruct.Td;
 
                 foreach (var employee in _employees) {
                     if (_queue.Count == 0) {
@@ -77,11 +107,15 @@ namespace Support.Models {
             }
         }
 
+        /// <summary>
+        /// Callback for completed query
+        /// </summary>
+        /// <param name="employee">who completed</param>
+        /// <param name="query"></param>
         private void CompletedCallback(Employee employee, Query query) {
             if (!_history.ContainsKey(employee)) {
                 _history[employee] = new List<Query>();
             }
-
             _history[employee].Add(query);
         }
 
@@ -91,8 +125,7 @@ namespace Support.Models {
         }
 
         public void AddQuery(Query query) {
-            // set time for processing query
-            query.ProcessTimeSec = (uint) _random.Next(QueryMinTime, QueryMaxTime);
+            query.ProcessTimeSec = (uint) _random.Next(ConfigStruct.QueryMinTime, ConfigStruct.QueryMaxTime);
 
             _queries.Add(query);
 
@@ -190,12 +223,60 @@ namespace Support.Models {
         /// </summary>
         private Dictionary<Employee, List<Query>> _history = new Dictionary<Employee, List<Query>>();
 
+        /// <summary>
+        /// Random for filling query random processing time
+        /// </summary>
         private readonly Random _random = new Random();
 
-        private const uint Tm = 4;
-        private const uint Td = 8;
+        /// <summary>
+        /// Timer for updating state of logic
+        /// </summary>
+        private Timer _timer;
+        /// <summary>
+        /// Is timer started
+        /// </summary>
+        private bool _started;
 
-        private const int QueryMinTime = 1;
-        private const int QueryMaxTime = 15;
+        /// <summary>
+        /// Configuration of logic
+        /// </summary>
+        public Config ConfigStruct { get; set; }
+
+        /// <summary>
+        /// Struct of configuration of logic
+        /// </summary>
+        public struct Config 
+        {
+            /// <summary>
+            /// Time for manager to work
+            /// </summary>
+            public int Tm { get; set; }
+            /// <summary>
+            /// Time for director to work
+            /// </summary>
+            public int Td { get; set; }
+
+            /// <summary>
+            /// Min query processing time
+            /// </summary>
+            public int QueryMinTime { get; set; }
+            /// <summary>
+            /// Max query processing time
+            /// </summary>
+            public int QueryMaxTime { get; set; }
+
+            /// <summary>
+            /// Number of operators to create
+            /// </summary>
+            public int NumOfOperators { get; set; }
+            /// <summary>
+            /// Number of managers to create
+            /// </summary>
+            public int NumOfManagers { get; set; }
+            /// <summary>
+            /// Number of directors to create
+            /// </summary>
+            public int NumOfDirectors { get; set; }
+        }
     }
 }

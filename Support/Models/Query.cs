@@ -10,7 +10,7 @@
 
         public Query(string text) {
             Status = StatusEnum.Processing;
-            Id = IdCounter++;
+            Id = _idCounter++;
             Text = text;
         }
 
@@ -23,6 +23,9 @@
         /// </summary>
         public uint ProcessTimeSec { get; set; }
 
-        private static uint IdCounter = 1;
+        /// <summary>
+        /// Counter of all the queries
+        /// </summary>
+        private static uint _idCounter = 1;
     }
 }

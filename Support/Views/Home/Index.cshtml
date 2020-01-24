@@ -8,7 +8,59 @@
         border: 1px solid black;
         padding: 12px;
     }
+    .input-caption {
+        float: left;
+    }
+    .input-config {
+        float: right;
+    }
+    #input-div {
+        width: 420px;
+        display: grid;
+        border: 1px solid black;
+    }
+    .input-entry {
+        margin: 10px;
+    }
 </style>
+
+<form method="post" action="/Home/Post">
+<div id="input-div">
+    <div class="input-entry">
+        <b class="input-caption">Time Min:</b> 
+        <input class="input-config" min="1" value="@ViewBag.Config.QueryMinTime" name="QueryMinTime" type="number"/>
+    </div>
+    <div class="input-entry">
+        <b class="input-caption">Time Max:</b> 
+        <input class="input-config" min="2" value="@ViewBag.Config.QueryMaxTime" name="QueryMaxTime" type="number"/>
+    </div>
+    <div class="input-entry">
+        <b class="input-caption">Tm:</b> 
+        <input class="input-config" min="1" value="@ViewBag.Config.Tm" name="Tm" type="number"/>
+    </div>
+    <div class="input-entry">
+        <b class="input-caption">Td:</b> 
+        <input class="input-config" min="2" value="@ViewBag.Config.Td" name="Td" type="number"/>
+    </div>
+
+    <div class="input-entry">
+        <b class="input-caption">Num of operators:</b> 
+        <input class="input-config" min="1" value="@ViewBag.Config.NumOfOperators" name="NumOfOperators" type="number"/>
+    </div>
+    <div class="input-entry">
+        <b class="input-caption">Num of managers:</b> 
+        <input class="input-config" min="0" value="@ViewBag.Config.NumOfManagers" name="NumOfManagers" type="number"/>
+    </div>
+    <div class="input-entry">
+        <b class="input-caption">Num of directors:</b> 
+        <input class="input-config" min="1" value="@ViewBag.Config.NumOfDirectors" name="NumOfDirectors" type="number"/>
+    </div>
+    <div class="input-entry">
+        <button type="submit">Submit and Start</button>
+    </div>
+
+</div>
+</form>
 
 <div style="float: left; margin: 10px;">
     <h2>Queries</h2>

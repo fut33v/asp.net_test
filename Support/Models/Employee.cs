@@ -5,7 +5,7 @@ namespace Support.Models
     public class Employee
     {
         public Employee() {
-            Id = IdCounter++;
+            Id = _idCounter++;
         }
 
         public virtual void Process(Query query) {
@@ -58,10 +58,22 @@ namespace Support.Models
 
         public string Position { get; protected set; }
         public Query Query { get; private set; }
+        /// <summary>
+        /// Time of start of processing current query
+        /// </summary>
         private DateTime _startTime ;
+        /// <summary>
+        /// unique Id of employee
+        /// </summary>
         public int Id { get; }
 
-        private static int IdCounter = 0;
+        /// <summary>
+        /// Counter of all the employees
+        /// </summary>
+        private static int _idCounter = 0;
+        /// <summary>
+        /// Callback for completed query
+        /// </summary>
         private Action<Employee, Query> _completedCallback;
     }
 }

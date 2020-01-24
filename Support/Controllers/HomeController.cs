@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Web.Http;
 using System.Web.Mvc;
 using Support.Models;
 
@@ -24,7 +21,19 @@ namespace Support.Controllers
             var history = _core.GetHistory();
             ViewBag.History = history;
 
+            ViewBag.Config = _core.ConfigStruct;
+
             return View();
+        }
+
+
+        [System.Web.Mvc.HttpPost()]
+        public ActionResult Post([FromBody] Core.Config config) {
+
+            _core.ConfigStruct = config;
+            _core.Start();
+            //return "Config changed <a href='/'>back<a>";
+            return Redirect("/");
         }
 
     }
